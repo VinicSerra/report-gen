@@ -4,6 +4,7 @@ from loguru import logger
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import time  # Para usar o tempo de espera (sleep)
 
 def load_html(file_path):
     try:
@@ -40,4 +41,7 @@ def main():
         logger.exception(f"Falha no processamento do relatório: {e}")
 
 if __name__ == '__main__':
-    main()
+    while True:  # Loop infinito
+        main()  
+        logger.info("Aguardando 1 minuto para a próxima execução...")
+        time.sleep(60) 
