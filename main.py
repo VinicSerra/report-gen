@@ -28,8 +28,8 @@ def generate_pdf_filename():
     return f"relatorio-{current_time}.pdf"
 
 def main():
-    load_dotenv()  # Carrega as variáveis do arquivo .env
-    output_directory = os.getenv('RELATORIO_DIR', os.getcwd())  # Usa a variável de ambiente ou o diretório atual
+    load_dotenv()  
+    output_directory = os.getenv('RELATORIO_DIR', os.getcwd()) 
     input_html = 'relatorio-tim.html'
     output_pdf = os.path.join(output_directory, generate_pdf_filename())
 
