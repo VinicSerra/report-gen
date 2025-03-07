@@ -1,11 +1,14 @@
-from lxml import etree
-import weasyprint
 from loguru import logger
 from datetime import datetime
 import os
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
+from pyppeteer import launch  # Importando o Puppeteer
+import traceback
+
 class ReportService:
+    
+    @staticmethod
     def load_html(file_path):
         try:
             # Carrega o template HTML
@@ -15,6 +18,8 @@ class ReportService:
         except Exception as e:
             logger.error(f"Erro ao ler o arquivo {file_path}: {e}")
             raise
+    
+    @staticmethod
     def render_html_with_data(template_path, data):
         # Configuração do Jinja2 para carregar o template HTML
         env = Environment(loader=FileSystemLoader(os.path.dirname(template_path)))
@@ -22,23 +27,30 @@ class ReportService:
         # Renderiza o template com os dados fornecidos
         rendered_html = template.render(data)
         return rendered_html
-    def convert_html_to_pdf(html_content, pdf_output_path):
+    
+    @staticmethod
+    async def convert_html_to_pdf(html_content, pdf_output_path):
         try:
             logger.info(f"Iniciando a conversão de HTML para PDF. Saída: {pdf_output_path}")
-            weasyprint.HTML(string=html_content).write_pdf(pdf_output_path)
+            # Inicializa o Puppeteer
+            browser = await launch(headless=True)
+            page = await browser.newPage()
+            await page.setContent(html_content)
+            await page.pdf({'path': pdf_output_path, 'format': 'A4'})
+            await browser.close()
             logger.success(f"PDF gerado com sucesso em {pdf_output_path}")
         except Exception as e:
             logger.error(f"Erro ao gerar PDF: {e}")
             raise
+    
+    @staticmethod
     def generate_pdf_filename():
         current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         return f"relatorio-{current_time}.pdf"
-    def generate_report():
-        load_dotenv()  # Carrega as variáveis do arquivo .env
-        output_directory = os.getenv('RELATORIO_DIR', os.getcwd())  # Usa a variável de ambiente ou o diretório atual
-        input_html = 'relatorio-template.html'
-        output_pdf = os.path.join(output_directory, ReportService.generate_pdf_filename())
-        # Dados a serem inseridos no template
+    
+    @staticmethod
+    async def generate_report():
+        # Dados simulados (mocked data) para o relatório
         data = {
             'logoURL': 'path/to/logo.png',
             'id': 123,
@@ -74,10 +86,19 @@ class ReportService:
             'aprovacao': 'Aprovado',
             'assinatura': 'Assinatura Y',
         }
+        
+        # Caminhos fixos
+        input_html = r'E:\project\Report\report-gen-main\relatorio-tim.html'  # Caminho fixo para o HTML
+        output_directory = r'E:\project\Report\report-gen-main\relatorios'  # Caminho fixo para o diretório de saída do PDF
+        os.makedirs(output_directory, exist_ok=True)  # Cria a pasta 'relatorios' se não existir
+        output_pdf = os.path.join(output_directory, ReportService.generate_pdf_filename())
+        
         try:
             # Carrega o HTML do template e renderiza com os dados
             html_content = ReportService.render_html_with_data(input_html, data)
             # Converte o HTML renderizado em PDF
-            ReportService.convert_html_to_pdf(html_content, output_pdf)
+            await ReportService.convert_html_to_pdf(html_content, output_pdf)
+            return output_pdf
         except Exception as e:
             logger.exception(f"Falha no processamento do relatório: {e}")
+            raise
