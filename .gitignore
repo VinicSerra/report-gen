@@ -1,5 +1,4 @@
 *.pdf
-*.html
 .env
 .venv
 *./__pycache__/

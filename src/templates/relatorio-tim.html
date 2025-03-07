@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório de Medição</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    .page-container {
+      width: 1120px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #000;
+    }
+
+    /* Document Header */
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      border: 1px solid black;
+      padding: 5px 15px;
+    }
+
+    .header-col {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-img {
+      height: 50px;
+      margin-right: 50px;
+    }
+
+    .header-col.text {
+      flex: 1;
+      text-align: right;
+      margin-left: 200px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #000;
+    }
+
+
+
+
+
+    .header-band {
+      background-color: #003F87;
+      color: #fff;
+      padding: 8px 10px;
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .metadata-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+
+    .metadata-table td {
+      padding: 3px 10px;
+      vertical-align: top;
+      width: 33.3%;
+      border-right: 1px solid #000;
+    }
+
+    .metadata-table tr td:first-child {
+      border-left: 1px solid #000;
+    }
+
+    .metadata-table tr td:last-child {
+      border-right: none;
+    }
+
+    .metadata-table td strong {
+      min-width: 100px;
+      display: inline-block;
+    }
+
+    .table-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0 5px;
+      text-align: center;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 30px;
+      border: 1px solid #000;
+    }
+
+    .items-table thead th {
+      background-color: #003F87;
+      color: #fff;
+      padding: 6px;
+      border: 1px solid #000;
+      text-align: left;
+    }
+
+    .items-table tbody td {
+      padding: 6px;
+      border: 1px solid #000;
+    }
+
+    .footer-separator {
+      margin-bottom: 5px;
+      border: none;
+      border-top: 1px solid #000;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .footer-left p,
+    .footer-right p {
+      margin: 0;
+    }
+
+    .totals-label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-container">
+    <div class="header-row">
+      <div class="header-col">
+        <img class="header-img" src="src/assets/tim-25.jpg" alt="TIM Logo" width="250px">
+      </div>
+      <div class="header-col text">
+        Relatório de Medição
+      </div>
+    </div>
+
+  </div>
+
+  </div>
+
+
+
+  <div class="header-band">
+    ID 24034 - Projeto LD RIO LARGO X SAO JOSE Remanejamento km292 ao km297 e km303 ao km309_ETAPA 2_ Construcao_PARTE
+    02/02
+  </div>
+  <table class="metadata-table">
+    <tr>
+      <td><strong>Status:</strong> {{ metadata.Status }}</td>
+      <td><strong>Contrato:</strong> {{ metadata.Contrato }}</td>
+      <td><strong>Ref. Contrato:</strong> {{ metadata["Ref. Contrato"] }}</td>
+    </tr>
+    <tr>
+      <td><strong>Emp. Projeto:</strong> {{ metadata["Emp. Projeto"] }}</td>
+      <td><strong>Capex Source:</strong> {{ metadata["Capex Source"] }}</td>
+      <td><strong>Layer:</strong> {{ metadata.Layer }}</td>
+    </tr>
+    <tr>
+      <td><strong>Emp. Construção:</strong> {{ metadata["Emp. Construção"] }}</td>
+      <td><strong>Element Detai:</strong> {{ metadata["Element Detai"] }}</td>
+      <td><strong>Description:</strong> {{ metadata.Description }}</td>
+    </tr>
+    <tr>
+      <td><strong>Network Elemen:</strong> {{ metadata["Network Elemen"] }}</td>
+      <td><strong>Lote BOQ:</strong> {{ metadata["Lote BOQ"] }}</td>
+      <td><strong>PO:</strong> {{ metadata.PO }}</td>
+    </tr>
+    <tr>
+      <td><strong>LPU NOVA:</strong> {{ metadata["LPU NOVA"] }}</td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <h1 class="table-title">Itens LPU - Serviços - Medição Acumulada:</h1>
+  <!-- Items Table: MEDIÇÃO ACUMULADA -->
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th style="width: 30%;">Nome</th>
+        <th style="width: 10%;">Quant. Emp. Proj.</th>
+        <th style="width: 10%;">Quant. Medida</th>
+        <th style="width: 10%;">Quant. Validada</th>
+        <th style="width: 15%;">Valor</th>
+        <th style="width: 10%;">Item</th>
+        <th style="width: 15%;">Custo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in medicao_acumulada %}
+      <tr>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.nome }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.quant_emp_projeto }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.quant_medida }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.quant_validada }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.valor }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.item }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.custo }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h1 class="table-title">Itens LPU - Serviços - Medição Atual:</h1>
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th style="width: 30%;">Nome</th>
+        <th style="width: 10%;">Quant. Emp. Proj.</th>
+        <th style="width: 10%;">Quant. Medida</th>
+        <th style="width: 10%;">Quant. Validada</th>
+        <th style="width: 15%;">Valor</th>
+        <th style="width: 10%;">Item</th>
+        <th style="width: 15%;">Custo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in medicao_atual %}
+      <tr>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.nome }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.quant_emp_projeto }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.quant_medida }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.quant_validada }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.valor }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.item }}</td>
+        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.custo }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+  <!-- Footer -->
+  <hr class="footer-separator">
+  <div class="footer-row">
+    <div class="footer-left">
+      <p><span class="totals-label">Valor Total Serviços Acumulados:</span> R$ {{ total_acumulado }}</p>
+      <p><span class="totals-label">Valor Total Medida Atual:</span> R$ {{ total_atual }}
+      </p>
+    </div>
+    <div class="footer-right">
+      <p><span class="totals-label">Gerado por:</span> {{ gerado_por }}</p>
+      <p><span class="totals-label">Data:</span> {{ data_relatorio}}</p>
+    </div>
+  </div>
+
+
+  </div>
+</body>
+
+</html>
