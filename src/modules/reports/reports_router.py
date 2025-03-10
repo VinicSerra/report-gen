@@ -13,6 +13,11 @@ router = APIRouter(
     tags=["Reports"]
 )
 
+@router.get("/{codigo}")
+def find_by_codigo(codigo: str, service: ReportService):
+    medicao = service.find_by_codigo_medicao(codigo)
+    return medicao
+
 @router.get("/")
 async def generate_report(service: ReportService):
     try:
@@ -49,7 +54,7 @@ async def generate_report(service: ReportService):
             "gerado_por": "João Silva",
             "data_relatorio": data_relatorio_formatada  # Usando a data formatada
         }
-        with open("src/templates/relatorio-tim.html", "r", encoding="utf-8") as f:
+        with open("src/templates/timhtml.html", "r", encoding="utf-8") as f:
             html_template = f.read()
 
         template = Template(html_template)

@@ -5,9 +5,51 @@ from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from pyppeteer import launch  # Importando o Puppeteer
 import traceback
+from src.database.session import Database
+from src.modules.reports.reports_models import MedicaoProjetoEmpreiteira
+
+
 
 class ReportService:
+
+    def __init__(self, db: Database): # type: ignore
+        self.db = db
+
+    def find_by_codigo_medicao(self,codigo:str):
+        medicao = self.db.query(MedicaoProjetoEmpreiteira).filter(MedicaoProjetoEmpreiteira.PO == codigo).all()
+        converted_data = self.convert_dates(medicao)
+        get_recent = self.get_most_recent_date(converted_data)
+        return get_recent
+
+    def convert_dates(self, data_list):
+        months_mapping = {
+            "jan": "Jan", "fev": "Feb", "mar": "Mar", "abr": "Apr",
+            "mai": "May", "jun": "Jun", "jul": "Jul", "ago": "Aug",
+            "set": "Sep", "out": "Oct", "nov": "Nov", "dez": "Dec"
+        }
+
+        for item in data_list:
+            try:
+                # Substituir o nome do mês de acordo com o mapeamento
+                for pt_month, en_month in months_mapping.items():
+                    if pt_month in item.Data.lower():
+                        item.Data = item.Data.replace(pt_month, en_month)
+                        break
+
+                # Converter para o formato de data
+                item.Data = datetime.strptime(item.Data, "%b %d %Y %I:%M%p")
+            except ValueError as e:
+                print(f"Erro ao converter a data: {e}")
+
+        return data_list
+
+    def get_most_recent_date(self,data_list):
+        # Filtra apenas itens onde "Data" já foi convertida corretamente para datetime
+        valid_dates = [item for item in data_list if isinstance(item.Data, datetime)]
     
+        return max(valid_dates, key=lambda x: x.Data) if valid_dates else None
+ 
+
     @staticmethod
     def load_html(file_path):
         try:
